@@ -18,8 +18,6 @@ class ImageViewerApp:
                 
         self.text_widget = tk.Text(root, wrap=tk.WORD, width=40, height=20)
         self.text_widget.pack(side=tk.LEFT, padx=10, pady=10)
-        self.text_widget.focus_set()  # Enfocar el cuadro de texto al iniciar la aplicación
-        self.root.after(100, self.focus_text_widget)  # Llamar al método para enfocar el cuadro de texto
 
         self.save_button = tk.Button(root, text="Guardar", command=self.save_text)
         self.save_button.pack(side=tk.LEFT, padx=10, pady=10)
@@ -57,18 +55,17 @@ class ImageViewerApp:
         self.text_files = []
         self.current_index = 0
 
-        self.auto_save_var = tk.IntVar()
-        self.auto_save_checkbox = tk.Checkbutton(button_frame, text="Guardar automáticamente", variable=self.auto_save_var)
+        self.auto_save_var = tk.IntVar(value=1)
+        self.auto_save_checkbox = tk.Checkbutton(button_frame, text="Guardar automáticamente al cambiar de imagen", variable=self.auto_save_var)
+        self.auto_save_checkbox.pack(side=tk.LEFT)
+
         self.auto_save_checkbox.pack(side=tk.LEFT)
 
         self.load_image_folder()
 
         self.root.update()  # Actualizar la ventana para asegurarse de que esté completamente construida
         self.root.focus_force()  # Enfocar la ventana principal al inicio
-        self.text_widget.focus_set()  # Enfocar el cuadro de texto
 
-    def focus_text_widget(self):
-        self.text_widget.focus_set()  # Enfocar el cuadro de texto
 
     def load_image_folder(self):
         folder_path = filedialog.askdirectory(title="Selecciona la carpeta de imágenes")
@@ -90,7 +87,8 @@ class ImageViewerApp:
 
 
     def select_image_from_list(self, event):
-        self.save_text()
+        if self.auto_save_var.get() == 1:  # Verifica si la casilla está marcada
+            self.save_text()
         selected_index = self.image_list.curselection()
         if selected_index:
             index = int(selected_index[0])
